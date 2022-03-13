@@ -1,0 +1,105 @@
+@font-face {
+  font-family: Satoshi Regular;
+  src: url("./assets/fonts/Satoshi-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: Satoshi Black;
+  src: url("./assets/fonts/Satoshi-Black.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: Satoshi Bold;
+  src: url("./assets/fonts/Satoshi-Bold.ttf") format("truetype");
+}
+
+:root {
+  --theme-color-50: theme("colors.blue.50");
+  --theme-color-100: theme("colors.blue.100");
+  --theme-color-200: theme("colors.blue.200");
+  --theme-color-300: theme("colors.blue.300");
+  --theme-color-400: theme("colors.blue.400");
+  --theme-color-500: theme("colors.blue.500");
+  --theme-color-600: theme("colors.blue.600");
+  --theme-color-700: theme("colors.blue.700");
+  --theme-color-800: theme("colors.blue.800");
+  --theme-color-900: theme("colors.blue.900");
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Satoshi Regular, "Segoe UI",
+    "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Satoshi Bold";
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+body {
+  height: 100vh;
+}
+
+input {
+  background-color: transparent;
+}
+
+input:active,
+input:focus {
+  outline: none;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: inset 0 0 0px 9999px white;
+  box-shadow: inset 0 0 0px 9999px white;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  #root {
+    @apply h-full flex;
+  }
+
+  main {
+    @apply h-full w-full flex;
+  }
+
+  input,
+  select,
+  textarea {
+    @apply !text-gray-900;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply text-slate-700 dark:text-white;
+  }
+
+  h1 {
+    @apply text-2xl;
+  }
+
+  span {
+    @apply dark:text-white;
+  }
+}

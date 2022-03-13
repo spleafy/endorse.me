@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  database:
+    image: mongo:latest
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_INIT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_INIT_PASSWORD}
+      MONGO_INITDB_DATABASE: communitybuilder
+    ports:
+      - "127.0.0.1:27000:27017"
+    volumes:
+      - ./mongodb.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+  server:
+    build:
+      context: ./server
+    ports:
+      - "4000:4000"
+    env_file:
+      - "./server/.env"
+    depends_on:
+      - database
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    env_file:
+      - "./client/.env"
+    depends_on:
+      - server

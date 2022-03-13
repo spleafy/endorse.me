@@ -1,0 +1,7 @@
+language: node_js
+node_js:
+  - "16"
+install:
+  - yarn install
+script:
+  - PORT=0 yarn test
