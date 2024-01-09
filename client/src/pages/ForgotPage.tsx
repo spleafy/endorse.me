@@ -15,7 +15,7 @@ import {
 } from "../utils/validators";
 
 const ForgotPage = () => {
-  document.title = `Forgot / ${process.env.REACT_APP_TITLE}`;
+  document.title = `Forgot / ${process.env.REACT_APP_NAME}`;
 
   const [sentEmail, setSentEmail] = useState(false);
 

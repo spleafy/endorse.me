@@ -14,7 +14,7 @@ import {
 } from "../utils/validators";
 
 const ResetPage = () => {
-  document.title = `Reset / ${process.env.REACT_APP_TITLE}`;
+  document.title = `Reset / ${process.env.REACT_APP_NAME}`;
 
   const navigate = useNavigate();
 

@@ -15,7 +15,7 @@ import {
 } from "../utils/validators";
 
 const LoginPage = () => {
-  document.title = `Login / ${process.env.REACT_APP_TITLE}`;
+  document.title = `Login / ${process.env.REACT_APP_NAME}`;
 
   const navigate = useNavigate();
 

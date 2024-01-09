@@ -17,7 +17,7 @@ import {
 } from "../utils/validators";
 
 const RegisterPage = () => {
-  document.title = `Register / ${process.env.REACT_APP_TITLE}`;
+  document.title = `Register / ${process.env.REACT_APP_NAME}`;
 
   const navigate = useNavigate();
 
