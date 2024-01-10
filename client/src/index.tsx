@@ -5,14 +5,23 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import store from "./redux/store";
 import { Provider } from "react-redux";
+import { PrismaneProvider, PRISMANE_COLORS } from "@prismane/core";
 
 console.log("%csimply.", "color:#00bfff; font-size:16pt");
 
+const theme = {
+  colors: {
+    primary: PRISMANE_COLORS.amethyst,
+  },
+};
+
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <PrismaneProvider theme={theme}>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </PrismaneProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

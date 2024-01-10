@@ -1,18 +1,21 @@
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-// Components
-import Card from "../components/Card";
-import Form from "../components/Form";
-import FormField from "../components/FormField";
-import PrimaryButton from "../components/PrimaryButton";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import {
+  Center,
+  Button,
+  Card,
+  Text,
+  Link,
+  Flex,
+  Form,
+  TextField,
+  PasswordField,
+  fr,
+} from "@prismane/core";
+import { useForm } from "@prismane/core/hooks";
+import { required, min, email } from "@prismane/core/validators";
 // Utils
 import { submitForm } from "../utils/form";
-import {
-  validateRequired,
-  validateMin,
-  validateEmailRegex,
-  validateEmailBackend,
-} from "../utils/validators";
+import { emailBackend } from "../utils/validators";
 
 const LoginPage = () => {
   document.title = `Login / ${process.env.REACT_APP_NAME}`;
@@ -22,76 +25,75 @@ const LoginPage = () => {
   const submit = async (values: any) => {
     const response = await submitForm(values, "user/auth/login");
     if (response.status !== 200) {
-      setError("password", {
-        type: "manual",
-        message: "This password is invalid for this email!",
-      });
+      setError("password", "This password is invalid for this email!");
     } else {
       localStorage.setItem("X-Auth-Token", response.data.token);
       navigate("/app");
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    setError,
-    formState: { errors },
-  } = useForm({
-    mode: "all",
+  const { register, handleSubmit, setError } = useForm({
+    fields: {
+      email: {
+        value: "",
+        validators: {
+          required: (v: any) => required(v),
+          min: (v: any) => min(v, 4, "Email"),
+          regex: (v: any) => email(v),
+          backend: async (v: any) => await emailBackend(v, true),
+        },
+      },
+      password: {
+        value: "",
+        validators: {
+          required: (v: any) => required(v),
+          min: (v: any) => min(v, 8, "Password"),
+        },
+      },
+    },
   });
 
   return (
-    <div className="flex justify-center items-center h-full w-full">
-      <Card width="480px" heading="Welcome back!">
-        <Form submit={handleSubmit(submit)}>
-          <FormField
-            name="email"
+    <Center w="100vw" h="100vh">
+      <Card w="480px">
+        <Card.Header justify="center" mb={fr(4)}>
+          <Text as="h1">Happy to see you!</Text>
+        </Card.Header>
+        <Form onSubmit={(e: SubmitEvent) => handleSubmit(e, submit)}>
+          <TextField
             placeholder="Enter email:"
             label="Email:"
-            type="text"
-            register={register}
-            error={errors.email}
-            validators={{
-              required: (v: any) => validateRequired(v),
-              min: (v: any) => validateMin(v, 4, "Email"),
-              regex: (v: any) => validateEmailRegex(v),
-              backend: async (v: any) => await validateEmailBackend(v, true),
-            }}
+            {...register("email")}
           />
-          <FormField
-            name="password"
+          <PasswordField
             placeholder="Enter password:"
             label="Password:"
-            type="password"
-            register={register}
-            error={errors.password}
-            validators={{
-              required: (v: any) => validateRequired(v),
-              min: (v: any) => validateMin(v, 8, "Password"),
-            }}
-            action={
-              <Link
-                to={"/auth/forgot"}
-                className="text-primary-500 hover:underline"
-              >
-                Forgot Password?
-              </Link>
-            }
+            {...register("password")}
           />
-          <PrimaryButton submit={true}>Login</PrimaryButton>
-          <span className="block w-full text-center text-slate-400 pt-6 text-sm">
-            Don't have an account?&nbsp;
-            <Link
-              to={"/auth/register"}
-              className="text-primary-500 hover:underline"
-            >
+          <Link
+            as={RouterLink}
+            cl="primary"
+            fs="sm"
+            mb={fr(6)}
+            href=""
+            to={"/auth/forgot"}
+          >
+            Forgot Password?
+          </Link>
+          <Button type="submit" full>
+            Login
+          </Button>
+          <Flex align="center" justify="center" fs="sm" pt={fr(6)}>
+            <Text cl={["base", 400]} ta="center">
+              Don't have an account?&nbsp;
+            </Text>
+            <Link as={RouterLink} cl="primary" href="" to={"/auth/register"}>
               Register Now
             </Link>
-          </span>
+          </Flex>
         </Form>
       </Card>
-    </div>
+    </Center>
   );
 };
 

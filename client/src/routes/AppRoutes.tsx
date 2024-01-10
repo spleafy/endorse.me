@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Spinner, Center, Main } from "@prismane/core";
 // Pages
 // Routes
 // Components
-import Loading from "../components/Loading";
 // Utils
 import { authToken } from "../utils/api";
 import { updateUserData } from "../utils/user";
@@ -32,40 +32,19 @@ const AppRoutes = () => {
     effect();
   });
 
-  const colors = require("tailwindcss/colors");
-
-  useEffect(() => {
-    if (loggedUser && loggedUser.settings) {
-      Object.keys(colors[loggedUser.settings.themeColor]).forEach(
-        (shade: string) => {
-          document.documentElement.style.setProperty(
-            `--theme-color-${shade}`,
-            colors[loggedUser.settings.themeColor][shade]
-          );
-        }
-      );
-
-      loggedUser.settings.darkTheme
-        ? document.querySelector("html")?.classList.add("dark")
-        : document.querySelector("html")?.classList.remove("dark");
-    }
-  }, [loggedUser, colors]);
-
   return (
     <>
       {loading ? (
-        <div className="h-full w-full flex justify-center items-center fixed">
-          <Loading />
-        </div>
+        <Center w="100vw" h="100vh">
+          <Spinner />
+        </Center>
       ) : (
-        <>
-          <main>
-            <Routes>
-              <Route path="/" element={<Navigate to={"home"} />} />
-              <Route path="home" element={<h1>Home</h1>} />
-            </Routes>
-          </main>
-        </>
+        <Main>
+          <Routes>
+            <Route path="/" element={<Navigate to={"home"} />} />
+            <Route path="home" element={<h1>Home</h1>} />
+          </Routes>
+        </Main>
       )}
     </>
   );
