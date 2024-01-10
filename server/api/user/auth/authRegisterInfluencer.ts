@@ -23,7 +23,10 @@ const authRegisterInfluencer = async (req: Request, res: Response) => {
       process.env.TOKEN_SECRET as string
     );
     res.json(
-      new ResponseMessage(200, { user: new ResponseUser(createdUser), token })
+      new ResponseMessage(200, {
+        user: new ResponseUser(createdUser as any),
+        token,
+      })
     );
   } else {
     res.json(new ResponseMessage(403, { user: null }));

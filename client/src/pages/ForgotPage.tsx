@@ -1,18 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useForm } from "react-hook-form";
-// Components
-import Card from "../components/Card";
-import Form from "../components/Form";
-import FormField from "../components/FormField";
-import PrimaryButton from "../components/PrimaryButton";
+import { Link as RouterLink } from "react-router-dom";
+import {
+  Button,
+  Card,
+  Center,
+  Link,
+  Flex,
+  Text,
+  Form,
+  TextField,
+  fr,
+} from "@prismane/core";
+import { useForm } from "@prismane/core/hooks";
+import { required, email } from "@prismane/core/validators";
 // Utils
 import { submitForm } from "../utils/form";
-import {
-  validateRequired,
-  validateEmailRegex,
-  validateEmailBackend,
-} from "../utils/validators";
+import { emailBackend } from "../utils/validators";
 
 const ForgotPage = () => {
   document.title = `Forgot / ${process.env.REACT_APP_NAME}`;
@@ -27,63 +30,64 @@ const ForgotPage = () => {
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    mode: "all",
+  const { register, handleSubmit } = useForm({
+    fields: {
+      email: {
+        value: "",
+        validators: {
+          required: (v: any) => required(v),
+          regex: (v: any) => email(v),
+          backend: async (v: any) => await emailBackend(v, true),
+        },
+      },
+    },
   });
 
   return (
-    <div className="flex justify-center items-center h-full w-full">
-      <Card width="480px" heading="Hope we can help!">
-        {!sentEmail ? (
-          <Form submit={handleSubmit(submit)}>
-            <FormField
-              name="email"
+    <Center w="100vw" h="100vh">
+      {!sentEmail ? (
+        <Card w="480px">
+          <Card.Header justify="center" mb={fr(4)}>
+            <Text as="h1">Hope we can help!</Text>
+          </Card.Header>
+
+          <Form onSubmit={(e: SubmitEvent) => handleSubmit(e, submit)}>
+            <TextField
               placeholder="Enter email:"
               label="Email:"
-              type="text"
-              register={register}
-              error={errors.email}
-              validators={{
-                required: (v: any) => validateRequired(v),
-                regex: (v: any) => validateEmailRegex(v),
-                backend: async (v: any) => await validateEmailBackend(v, true),
-              }}
+              {...register("email")}
             />
 
-            <PrimaryButton submit={true}>Send Link</PrimaryButton>
-            <span className="block w-full text-center text-slate-400 pt-6 text-sm">
-              Remembered your password?&nbsp;
-              <Link
-                to={"/auth/login"}
-                className="text-primary-500 hover:underline"
-              >
+            <Button type="submit" full>
+              Send Link
+            </Button>
+            <Flex align="center" justify="center" fs="sm" pt={fr(6)}>
+              <Text cl={["base", 400]} ta="center">
+                Remembered your password?&nbsp;
+              </Text>
+              <Link as={RouterLink} cl="primary" href="" to={"/auth/login"}>
                 Login Now
               </Link>
-            </span>
+            </Flex>
           </Form>
-        ) : (
-          <div className="text-center shadow-[0_0_20px_10px_rgba(0,0,0,0.1)] w-[480px] min-w-[480px] rounded-md px-16 py-8 animate-scale bg-white select-none">
-            <h1>We sent you an email!</h1>
-            <h2 className="text-md mb-8 mt-3 text-slate-700">
-              If you don't find the email, check the junk folder!
-            </h2>
-            <span className="block w-full text-slate-400 pt-6 text-sm">
+        </Card>
+      ) : (
+        <Card>
+          <Text as="h1">We sent you an email!</Text>
+          <Text as="h2" fs="md" mb={fr(8)} mt={fr(3)} cl={["base", 700]}>
+            If you don't find the email, check the junk folder!
+          </Text>
+          <Flex align="center" justify="center" fs="sm" pt={fr(6)}>
+            <Text cl={["base", 400]} ta="center">
               Go back to login?&nbsp;
-              <Link
-                to={"/auth/login"}
-                className="text-primary-500 hover:underline"
-              >
-                Login Now
-              </Link>
-            </span>
-          </div>
-        )}
-      </Card>
-    </div>
+            </Text>
+            <Link as={RouterLink} cl="primary" href="" to={"/auth/login"}>
+              Login Now
+            </Link>
+          </Flex>
+        </Card>
+      )}
+    </Center>
   );
 };
 

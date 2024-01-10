@@ -1,20 +1,50 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
-// Components
-import Card from "../components/Card";
-import Form from "../components/Form";
-import FormField from "../components/FormField";
-import SelectFormField from "../components/SelectFormField";
-import PrimaryButton from "../components/PrimaryButton";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
+import {
+  Button,
+  Card,
+  Text,
+  Center,
+  Flex,
+  Link,
+  Form,
+  TextField,
+  PasswordField,
+  fr,
+  Box,
+} from "@prismane/core";
+import { useForm } from "@prismane/core/hooks";
+import { required, min, email } from "@prismane/core/validators";
+import { motion } from "framer-motion";
 // Utils
 import { submitForm } from "../utils/form";
-import {
-  validateRequired,
-  validateMin,
-  validateEmailRegex,
-  validateEmailBackend,
-} from "../utils/validators";
+import { emailBackend } from "../utils/validators";
+
+const BottomForm = () => (
+  <>
+    <Text pb={fr(6)} cl={["base", 400]} fs="sm">
+      By registering, you agree to our&nbsp;
+      <Link as={RouterLink} dp="inline-block" cl="primary" href="" to={"/"}>
+        Terms & Conditions
+      </Link>
+      &nbsp;and&nbsp;
+      <Link as={RouterLink} dp="inline-block" cl="primary" href="" to={"/"}>
+        Privacy Policy
+      </Link>
+    </Text>
+    <Button type="submit" full>
+      Register
+    </Button>
+    <Flex align="center" justify="center" fs="sm" pt={fr(6)}>
+      <Text cl={["base", 400]} ta="center">
+        Already have an account?&nbsp;
+      </Text>
+      <Link as={RouterLink} cl="primary" href="" to={"/auth/login"}>
+        Login
+      </Link>
+    </Flex>
+  </>
+);
 
 const RegisterPage = () => {
   document.title = `Register / ${process.env.REACT_APP_NAME}`;
@@ -26,10 +56,7 @@ const RegisterPage = () => {
   const submitInfluencer = async (values: any) => {
     const response = await submitForm(values, "auth/register/influencer");
     if (response.status !== 200) {
-      setError("password", {
-        type: "manual",
-        message: "An error occured!",
-      });
+      setError("password", "An error occured!");
     } else {
       localStorage.setItem("X-Auth-Token", response.data.token);
       navigate("/app");
@@ -39,216 +66,165 @@ const RegisterPage = () => {
   const submitBussiness = async (values: any) => {
     const response = await submitForm(values, "auth/register/business");
     if (response.status !== 200) {
-      setError("password", {
-        type: "manual",
-        message: "An error occured!",
-      });
+      setError("password", "An error occured!");
     } else {
       localStorage.setItem("X-Auth-Token", response.data.token);
       navigate("/app");
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-    setValue,
-    getValues,
-  } = useForm({
-    mode: "all",
+  const { register, handleSubmit, setError } = useForm({
+    fields: {
+      influencer_fullname: {
+        value: "",
+        validators: {
+          required: (v: any) => required(v),
+        },
+      },
+      influencer_email: {
+        value: "",
+        validators: {
+          required: (v: any) => required(v),
+          regex: (v: any) => email(v),
+          backend: async (v: any) => await emailBackend(v, false),
+        },
+      },
+      influencer_password: {
+        value: "",
+        validators: {
+          required: (v: any) => required(v),
+          email: (v: any) => min(v, 8, "Password"),
+        },
+      },
+      business_name: {
+        value: "",
+        validators: {
+          required: (v: any) => required(v),
+        },
+      },
+      business_email: {
+        value: "",
+        validators: {
+          required: (v: any) => required(v),
+          regex: (v: any) => email(v),
+          backend: async (v: any) => await emailBackend(v, false),
+        },
+      },
+      business_password: {
+        value: "",
+        validators: {
+          required: (v: any) => required(v),
+          password: (v: any) => min(v, 8, "Password"),
+        },
+      },
+    },
   });
 
   return (
-    <div className="flex justify-center items-center h-full w-full">
-      <Card width="480px" heading="Happy to see you!">
-        <div className="flex justify-between items-center mb-8 relative py-3 select-none text-slate-500">
-          <div
-            className={`w-full flex justify-center items-center cursor-pointer ${
-              influencer ? "text-primary-500" : ""
-            }`}
+    <Center w="100vw" h="100vh">
+      <Card w="480px">
+        <Card.Header justify="center" mb={fr(4)}>
+          <Text as="h1">Happy to see you!</Text>
+        </Card.Header>
+        <Flex
+          justify="between"
+          align="center"
+          mb={fr(8)}
+          py={fr(3)}
+          pos="relative"
+          cl="base"
+        >
+          <Flex
+            w="100%"
+            justify="center"
+            align="center"
+            cs="pointer"
+            cl={influencer ? "primary" : undefined}
             onClick={() => {
               setInfluencer(true);
             }}
           >
             Influencer
-          </div>
-          <div
-            className={`w-full flex justify-center items-center cursor-pointer ${
-              !influencer ? "text-primary-500" : ""
-            }`}
+          </Flex>
+          <Flex
+            w="100%"
+            justify="center"
+            align="center"
+            cs="pointer"
+            cl={!influencer ? "primary" : undefined}
             onClick={() => {
               setInfluencer(false);
             }}
           >
             Business
-          </div>
-          <div
-            className={`absolute h-[2px] w-1/2 bg-primary-500 bottom-0 rounded-full transition-all right-[176px] ${
-              !influencer ? "!right-[0px]" : ""
-            }`}
-          ></div>
-        </div>
+          </Flex>
+          <Flex
+            h={2}
+            w="100%"
+            b={0}
+            pos="absolute"
+            justify={!influencer ? "end" : "start"}
+          >
+            <Box
+              as={motion.div}
+              layout
+              h="100%"
+              w="50%"
+              bg="primary"
+              br="full"
+            ></Box>
+          </Flex>
+        </Flex>
         <>
           {influencer ? (
-            <Form submit={handleSubmit(submitInfluencer)}>
-              <FormField
+            <Form
+              onSubmit={(e: SubmitEvent) => handleSubmit(e, submitInfluencer)}
+            >
+              <TextField
                 name="influencerfullname"
                 placeholder="Enter name:"
                 label="Full Name:"
-                type="text"
-                register={register}
-                error={errors.influencerfullname}
-                validators={{
-                  required: (v: any) => validateRequired(v),
-                }}
+                {...register("influencer_fullname")}
               />
-              <FormField
-                name="influenceremail"
+              <TextField
                 placeholder="Enter email:"
                 label="Email:"
                 type="text"
-                register={register}
-                error={errors.influenceremail}
-                validators={{
-                  required: (v: any) => validateRequired(v),
-                  regex: (v: any) => validateEmailRegex(v),
-                  backend: async (v: any) =>
-                    await validateEmailBackend(v, false),
-                }}
+                {...register("influencer_email")}
               />
-              <FormField
-                name="influencerpassword"
+              <PasswordField
                 placeholder="Enter password:"
                 label="Password:"
-                type="password"
-                register={register}
-                error={errors.influencerpassword}
-                validators={{
-                  required: (v: any) => validateRequired(v),
-                  email: (v: any) => validateMin(v, 8, "Password"),
-                }}
+                {...register("influencer_password")}
               />
-              <span className="block w-full text-slate-400 pb-6 text-sm">
-                By registering, you agree to our&nbsp;
-                <Link to={"/"} className="text-primary-500 hover:underline">
-                  Terms & Conditions
-                </Link>
-                &nbsp;and&nbsp;
-                <Link to={"/"} className="text-primary-500 hover:underline">
-                  Privacy Policy
-                </Link>
-              </span>
-              <PrimaryButton submit={true}>Register</PrimaryButton>
-              <span className="block w-full text-center text-slate-400 pt-6 text-sm">
-                Already have an account?&nbsp;
-                <Link
-                  to={"/auth/login"}
-                  className="text-primary-500 hover:underline"
-                >
-                  Login Now
-                </Link>
-              </span>
+              <BottomForm />
             </Form>
           ) : (
-            <Form submit={handleSubmit(submitBussiness)}>
-              <FormField
-                name="businessname"
+            <Form
+              onSubmit={(e: SubmitEvent) => handleSubmit(e, submitBussiness)}
+            >
+              <TextField
                 placeholder="Enter business name:"
                 label="Business name:"
-                type="text"
-                register={register}
-                error={errors.businessname}
-                validators={{
-                  required: (v: any) => validateRequired(v),
-                }}
+                {...register("business_name")}
               />
-              <FormField
+              <TextField
                 name="businessemail"
                 placeholder="Enter business email:"
                 label="Business email:"
-                type="text"
-                register={register}
-                error={errors.businessemail}
-                validators={{
-                  required: (v: any) => validateRequired(v),
-                  regex: (v: any) => validateEmailRegex(v),
-                  backend: async (v: any) =>
-                    await validateEmailBackend(v, false),
-                }}
+                {...register("business_email")}
               />
-              <FormField
-                name="businesspassword"
+              <PasswordField
                 placeholder="Enter password:"
                 label="Password:"
-                type="password"
-                register={register}
-                error={errors.businesspassword}
-                validators={{
-                  required: (v: any) => validateRequired(v),
-                  password: (v: any) => validateMin(v, 8, "Password"),
-                }}
+                {...register("business_password")}
               />
-              <div className="flex flex-col">
-                <span className="mb-2 text-slate-700 text-sm flex items-center justify-between dark:text-slate-100">
-                  Country / Identity number:
-                </span>
-                <div className="flex gap-[10px]">
-                  <div className="w-[150px]">
-                    <SelectFormField
-                      name="businesscountry"
-                      placeholder="Country:"
-                      label=""
-                      register={register}
-                      error={errors.businesscountry}
-                      validators={{
-                        required: (v: any) => validateRequired(v),
-                      }}
-                      options={["bg", "us", "uk", "ru"]}
-                      setValue={setValue}
-                      getValues={getValues}
-                    />
-                  </div>
-                  <FormField
-                    name="businessidentitynumber"
-                    placeholder="Enter identity number:"
-                    label=""
-                    type="text"
-                    register={register}
-                    error={errors.businessidentitynumber}
-                    validators={{
-                      required: (v: any) => validateRequired(v),
-                    }}
-                  />
-                </div>
-              </div>
-
-              <span className="block w-full text-slate-400 pb-6 text-sm">
-                By registering, you agree to our&nbsp;
-                <Link to={"/"} className="text-primary-500 hover:underline">
-                  Terms & Conditions
-                </Link>
-                &nbsp;and&nbsp;
-                <Link to={"/"} className="text-primary-500 hover:underline">
-                  Privacy Policy
-                </Link>
-              </span>
-              <PrimaryButton submit={true}>Register</PrimaryButton>
-              <span className="block w-full text-center text-slate-400 pt-6 text-sm">
-                Already have an account?&nbsp;
-                <Link
-                  to={"/auth/login"}
-                  className="text-primary-500 hover:underline"
-                >
-                  Login Now
-                </Link>
-              </span>
+              <BottomForm />
             </Form>
           )}
         </>
       </Card>
-    </div>
+    </Center>
   );
 };
 
